@@ -1,0 +1,6 @@
+@HellGateServer_HostAddress = http://localhost:5144
+
+GET {{HellGateServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
