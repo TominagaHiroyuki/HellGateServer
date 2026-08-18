@@ -23,6 +23,7 @@ public class UserRepository
     {
         _db = db;
         _logger = logger;
+
     }
 
     /// <summary>
@@ -30,38 +31,18 @@ public class UserRepository
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public async Task<User> GetUserAsync(string userId)
+    public async Task<User?> GetUserAsync(string userId)
     {
         var user = await _db.Users.FirstOrDefaultAsync(x => x.UserId == userId);
 
         // ユーザーが存在しない場合はログを出力して処理を終了する
-        if(user == null)
+        if(user is null)
         {
             _logger.LogWarning("User not found: {UserId}", userId);
-            return default!;
+            return null;
         }
 
         return ConvertToDomain(user);
-    }
-
-    /// <summary>
-    /// ユーザーを作成する
-    /// </summary>
-    /// <param name="user"></param>
-    /// <returns></returns>
-    public async Task<User> CreateUserAsync(User user)
-    {
-        var userEntity = new UserEntity
-        {
-            UserId = user.UserId,
-            CustomerId = BitConverter.ToInt64(Guid.Parse(user.UserId).ToByteArray()), // ユーザーIDを元にCustomerIdを生成
-            Name = user.Name,
-        };
-
-        await _db.Users.AddAsync(userEntity);
-        await _db.SaveChangesAsync();
-
-        return ConvertToDomain(userEntity);
     }
 
     /// <summary>

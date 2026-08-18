@@ -56,7 +56,6 @@ public class AuthController : ControllerBase
     [HttpPost("signin")]
     public async Task<IActionResult> Signin([FromBody] SigninRequest request)
     {
-        // TODO: サインイン処理
         _logger.LogDebug("Signin Request:{DeviceGuid} : {CustomerId}", request.DeviceGuid, request.CustomerId);
 
         var result = await _authService.Signin(request);

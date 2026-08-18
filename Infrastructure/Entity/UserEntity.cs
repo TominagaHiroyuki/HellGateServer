@@ -3,6 +3,8 @@
     @brief ユーザーテーブルエンティティ
 */
 
+using HellGateServer.Domain;
+
 namespace HellGateServer.Infrastructure.Entity;
 
 public class UserEntity
@@ -12,4 +14,14 @@ public class UserEntity
     public long CustomerId { get; set; } = 0L; // 顧客ID (Unique)
     public long CreatedAt { get; set; } = 0L; // UnixTime (UTC)
     public string Name { get; set; } = string.Empty; // ユーザー名
+
+    public User ToDomain()
+    {
+        return new User
+        {
+            UserId = UserId,
+            CustomerId = CustomerId,
+            Name = Name,
+        };
+    }
 }

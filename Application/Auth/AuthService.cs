@@ -6,6 +6,7 @@
 using HellGateServer.Domain;
 using HellGateServer.Infrastructure.Repository;
 using HellGateServer.Api.Contracts.Auth;
+using HellGateServer.Application.Interfaces;
 
 namespace HellGateServer.Application.Services;
 
@@ -20,6 +21,7 @@ public class AuthService
     private readonly UserRepository _userRepo;
     private readonly UserDeviceRepository _userDeviceRepo;
     private readonly TokenService _tokenService;
+    private readonly IAuthRepository _authRepo;
 
     /// <summary>
     /// コンストラクタ
@@ -27,11 +29,15 @@ public class AuthService
     /// <param name="userRepo"></param>
     /// <param name="userDeviceRepo"></param>
     /// <param name="tokenService"></param>
-    public AuthService(UserRepository userRepo, UserDeviceRepository userDeviceRepo, TokenService tokenService)
+    public AuthService(UserRepository userRepo,
+                       UserDeviceRepository userDeviceRepo,
+                       TokenService tokenService,
+                       IAuthRepository authRepo)
     {
         _userRepo = userRepo;
         _userDeviceRepo = userDeviceRepo;
         _tokenService = tokenService;
+        _authRepo = authRepo;
     }
 
     /// <summary>
@@ -48,7 +54,7 @@ public class AuthService
             return null;
         }
 
-        var user = await CreateUserAsync();
+        var user = await CreateUserAsync(request.DeviceGuid);
         var token = _tokenService.GenerateToken(user);
 
         return new AuthResult
@@ -66,8 +72,14 @@ public class AuthService
     public async Task<AuthResult?> Signin(SigninRequest request)
     {
         // ユーザーを取得する
-        var user = await _userRepo.GetUserAsync(request.DeviceGuid);
-        if(user == null)
+        var userDevice = await _userDeviceRepo.GetUserDeviceAsync(request.DeviceGuid);
+        if(userDevice is null)
+        {
+            return null!;
+        }
+
+        var user = await _userRepo.GetUserAsync(request.CustomerId.ToString());
+        if(user is null)
         {
             return null!;
         }
@@ -79,17 +91,6 @@ public class AuthService
             User = user,
             Token = token,
         };
-    }
-
-    /// <summary>
-    /// ユーザーを取得する
-    /// </summary>
-    /// <param name="deviceGuid"></param>
-    /// <returns></returns>
-    public async Task<User> GetUserAsync(string deviceGuid)
-    {
-        var user = await _userRepo.GetUserAsync(deviceGuid);
-        return user;
     }
 
     /// <summary>
@@ -110,16 +111,15 @@ public class AuthService
     /// ユーザーを作成する
     /// </summary>
     /// <returns></returns>
-    private async Task<User> CreateUserAsync()
+    private async Task<User> CreateUserAsync(string deviceGuid)
     {
         var user = new User
         {
             UserId = Guid.NewGuid().ToString(),
             Name = "New User",
         };
+        user.CustomerId = BitConverter.ToInt64(Guid.Parse(user.UserId).ToByteArray());
 
-        user = await _userRepo.CreateUserAsync(user);
-
-        return user;
+        return await _authRepo.SaveUserAndDeviceAsync(user, deviceGuid);
     }
 }

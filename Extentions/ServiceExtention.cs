@@ -5,6 +5,7 @@
 
 using HellGateServer.Infrastructure.Repository;
 using HellGateServer.Application.Services;
+using HellGateServer.Application.Interfaces;
 
 namespace HellGateServer.Extentions;
 
@@ -16,5 +17,6 @@ public static class ServiceExtension
         services.AddScoped<UserDeviceRepository>();
         services.AddScoped<TokenService>();
         services.AddScoped<AuthService>();
+        services.AddScoped<IAuthRepository, AuthRepository>();
     }
 }
