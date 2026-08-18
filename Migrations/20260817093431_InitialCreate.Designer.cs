@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HellGateServer.Migrations
 {
-    [DbContext(typeof(GameDbContext))]
+    [DbContext(typeof(GameDb))]
     [Migration("20260817093431_InitialCreate")]
     partial class InitialCreate
     {

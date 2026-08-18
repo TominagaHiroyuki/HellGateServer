@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HellGateServer.Migrations
 {
-    [DbContext(typeof(GameDbContext))]
+    [DbContext(typeof(GameDb))]
     partial class GameDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

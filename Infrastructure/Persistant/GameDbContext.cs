@@ -11,9 +11,9 @@ namespace HellGateServer.Infrastructure.Persistant;
 #pragma warning disable CS8618
 #pragma warning disable IDE0290
 
-public class GameDbContext : DbContext
+public class GameDb : DbContext
 {
-    public GameDbContext(DbContextOptions<GameDbContext> options) : base(options){}
+    public GameDb(DbContextOptions<GameDb> options) : base(options){}
 
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<UserDeviceEntity> UserDevices { get; set; }

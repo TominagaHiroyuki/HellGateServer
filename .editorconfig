@@ -11,5 +11,8 @@ trim_trailing_whitespace = true
 [*.{cs,csproj,props,targets,json,yml,yaml,md,http}]
 end_of_line = lf
 
+# CA1848: Use the LoggerMessage delegates
+dotnet_diagnostic.CA1848.severity = none
+
 [*.md]
 trim_trailing_whitespace = false
