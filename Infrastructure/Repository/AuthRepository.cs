@@ -54,12 +54,12 @@ public class AuthRepository : IAuthRepository
             _db.UserDevices.Add(userDeviceEntity);
 
             await _db.SaveChangesAsync();
-            await _db.Database.CommitTransactionAsync();
+            await transaction.CommitAsync();
             return userEntity.ToDomain();
         }
         catch
         {
-            await _db.Database.RollbackTransactionAsync();
+            await transaction.RollbackAsync();
             throw;
         }
     }

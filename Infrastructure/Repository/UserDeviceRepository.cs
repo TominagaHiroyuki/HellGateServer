@@ -54,6 +54,7 @@ public class UserDeviceRepository
         return new UserDevice
         {
             DeviceGuid = entity.DeviceGuid,
+            UserId = entity.UserId,
         };
     }
 }

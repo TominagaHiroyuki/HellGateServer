@@ -16,6 +16,11 @@ public class AuthResult
     public string Token { get; set; } = string.Empty;
 }
 
+public class SignupResult
+{
+    public User User { get; set; } = null!;
+}
+
 public class AuthService
 {
     private readonly UserRepository _userRepo;
@@ -45,7 +50,7 @@ public class AuthService
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    public async Task<AuthResult?> Signup(SignupRequest request)
+    public async Task<SignupResult?> Signup(SignupRequest request)
     {
         // TODO: サインアップ処理
         if(await IsExistsUser(request.DeviceGuid))
@@ -55,12 +60,14 @@ public class AuthService
         }
 
         var user = await CreateUserAsync(request.DeviceGuid);
-        var token = _tokenService.GenerateToken(user);
+        if(user is null)
+        {
+            return null;
+        }
 
-        return new AuthResult
+        return new SignupResult
         {
             User = user,
-            Token = token,
         };
     }
 
@@ -71,14 +78,15 @@ public class AuthService
     /// <returns></returns>
     public async Task<AuthResult?> Signin(SigninRequest request)
     {
-        // ユーザーを取得する
+        // 該当のデバイスが登録されているか
         var userDevice = await _userDeviceRepo.GetUserDeviceAsync(request.DeviceGuid);
         if(userDevice is null)
         {
             return null!;
         }
 
-        var user = await _userRepo.GetUserAsync(request.CustomerId.ToString());
+        // 該当のユーザーが存在するか
+        var user = await _userRepo.GetUserAsync(userDevice.UserId, request.CustomerId);
         if(user is null)
         {
             return null!;

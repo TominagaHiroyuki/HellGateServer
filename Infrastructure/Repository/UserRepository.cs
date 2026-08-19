@@ -31,9 +31,9 @@ public class UserRepository
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public async Task<User?> GetUserAsync(string userId)
+    public async Task<User?> GetUserAsync(int userId, string customerId)
     {
-        var user = await _db.Users.FirstOrDefaultAsync(x => x.UserId == userId);
+        var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == userId);
 
         // ユーザーが存在しない場合はログを出力して処理を終了する
         if(user is null)

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HellGateServer.Api.Controllers;
 
 [ApiController]
-[Route("auth")]
+[Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
@@ -40,12 +40,13 @@ public class AuthController : ControllerBase
         _logger.LogDebug("Signup Request:{DeviceGuid}", request.DeviceGuid);
 
         var result = await _authService.Signup(request);
+        // サインアップ処理 失敗した場合はConflictを返す
         if(result is null)
         {
             return Conflict("User already exists.");
         }
 
-        return Ok(ToResponse(result));
+        return StatusCode(StatusCodes.Status201Created, ToResponse(result));
     }
 
     /// <summary>
@@ -72,13 +73,27 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="result"></param>
     /// <returns></returns>
-    private AuthResponse ToResponse(AuthResult result)
+    private static AuthResponse ToResponse(AuthResult result)
     {
         return new AuthResponse
         {
             UserId = result.User.UserId,
             CustomerId = result.User.CustomerId,
             Token = result.Token,
+        };
+    }
+
+    /// <summary>
+    /// サインアップレスポンスを作成する
+    /// </summary>
+    /// <param name="result"></param>
+    /// <returns></returns>
+    private static SignupResponse ToResponse(SignupResult result)
+    {
+        return new SignupResponse
+        {
+            UserId = result.User.UserId,
+            CustomerId = result.User.CustomerId,
         };
     }
 }

@@ -11,3 +11,9 @@ public class AuthResponse
     public long CustomerId { get; set; } = 0L;
     public string Token { get; set; } = string.Empty;
 }
+
+public class SignupResponse
+{
+    public string UserId { get; set; } = string.Empty;
+    public long CustomerId { get; set; } = 0L;
+}
