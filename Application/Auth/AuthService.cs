@@ -86,7 +86,7 @@ public class AuthService
         }
 
         // 該当のユーザーが存在するか
-        var user = await _userRepo.GetUserAsync(userDevice.UserId, request.CustomerId);
+        var user = await _userRepo.GetUserAsync(userDevice.UserId);
         if(user is null)
         {
             return null!;

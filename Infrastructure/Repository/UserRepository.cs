@@ -27,13 +27,32 @@ public class UserRepository
     }
 
     /// <summary>
-    /// ユーザーを取得する
+    /// ユーザーを取得する(ID)
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public async Task<User?> GetUserAsync(int userId, string customerId)
+    public async Task<User?> GetUserAsync(int Id)
     {
-        var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == Id);
+
+        // ユーザーが存在しない場合はログを出力して処理を終了する
+        if(user is null)
+        {
+            _logger.LogWarning("User not found: {Id}", Id);
+            return null;
+        }
+
+        return ConvertToDomain(user);
+    }
+
+    /// <summary>
+    /// ユーザーを取得する(ユーザーID)
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public async Task<User?> GetUserAsync(string userId)
+    {
+        var user = await _db.Users.FirstOrDefaultAsync(x => x.UserId == userId);
 
         // ユーザーが存在しない場合はログを出力して処理を終了する
         if(user is null)
